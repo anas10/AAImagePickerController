@@ -13,6 +13,8 @@
 		8A678A8D1B077A480036A1BC /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A678A8C1B077A480036A1BC /* Images.xcassets */; };
 		8A678A901B077A480036A1BC /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8A678A8E1B077A480036A1BC /* LaunchScreen.xib */; };
 		8A678A9C1B077A490036A1BC /* AAImagePickerControllerDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A678A9B1B077A490036A1BC /* AAImagePickerControllerDemoTests.swift */; };
+		8A678AAB1B077AB60036A1BC /* AAImagePickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A678AAA1B077AB60036A1BC /* AAImagePickerController.swift */; };
+		8A678AAD1B078CF60036A1BC /* AKPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A678AAC1B078CF60036A1BC /* AKPickerView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +38,8 @@
 		8A678A951B077A490036A1BC /* AAImagePickerControllerDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AAImagePickerControllerDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A678A9A1B077A490036A1BC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8A678A9B1B077A490036A1BC /* AAImagePickerControllerDemoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AAImagePickerControllerDemoTests.swift; sourceTree = "<group>"; };
+		8A678AAA1B077AB60036A1BC /* AAImagePickerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AAImagePickerController.swift; sourceTree = "<group>"; };
+		8A678AAC1B078CF60036A1BC /* AKPickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AKPickerView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +63,8 @@
 		8A678A771B077A480036A1BC = {
 			isa = PBXGroup;
 			children = (
+				8A678AAC1B078CF60036A1BC /* AKPickerView.swift */,
+				8A678AA91B077AB60036A1BC /* AAImagePickerController */,
 				8A678A821B077A480036A1BC /* AAImagePickerControllerDemo */,
 				8A678A981B077A490036A1BC /* AAImagePickerControllerDemoTests */,
 				8A678A811B077A480036A1BC /* Products */,
@@ -110,6 +116,14 @@
 				8A678A9A1B077A490036A1BC /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		8A678AA91B077AB60036A1BC /* AAImagePickerController */ = {
+			isa = PBXGroup;
+			children = (
+				8A678AAA1B077AB60036A1BC /* AAImagePickerController.swift */,
+			);
+			path = AAImagePickerController;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -213,6 +227,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				8A678A881B077A480036A1BC /* ViewController.swift in Sources */,
+				8A678AAB1B077AB60036A1BC /* AAImagePickerController.swift in Sources */,
+				8A678AAD1B078CF60036A1BC /* AKPickerView.swift in Sources */,
 				8A678A861B077A480036A1BC /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -343,6 +359,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = AAImagePickerControllerDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -353,6 +370,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = AAImagePickerControllerDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

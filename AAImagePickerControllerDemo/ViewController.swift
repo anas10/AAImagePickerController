@@ -20,6 +20,16 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    @IBAction func showPicker(sender: AnyObject) {
+        let pc = AAImagePickerController()
+        pc.pickerDelegate = self
+        self.presentViewController(pc, animated: true, completion: nil)
+    }
+}
 
+extension ViewController : AAImagePickerControllerDelegate {
+    func imagePickerControllerDidCancel() {
+        self.dismissViewControllerAnimated(true, completion: nil)
+    }
 }
 
