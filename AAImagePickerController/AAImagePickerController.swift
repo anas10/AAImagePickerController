@@ -147,6 +147,14 @@ class AAImagePickerControllerList : UICollectionViewController {
     }()
   var selectionColor = UIColor(red: 55/255, green: 93/255, blue: 129/255, alpha: 1.0)
   var currentGroupSelection : Int?
+  var accessDeniedView: UIView = {
+    let label = UILabel()
+    label.text = "This application doesn't have access to your photos"
+    label.textAlignment = NSTextAlignment.Center
+    label.textColor = UIColor.lightGrayColor()
+    label.numberOfLines = 0
+    return label
+    }()
   
   // MARK: Initialization
   override init(collectionViewLayout layout: UICollectionViewLayout) {
@@ -208,8 +216,8 @@ class AAImagePickerControllerList : UICollectionViewController {
         callback()
       }
       }, failureBlock: { (error: NSError!) -> Void in
-        // TODO : Handle this case by showing a message
-        assertionFailure("access denied")
+        self.accessDeniedView.frame = self.view.bounds
+        self.view.addSubview(self.accessDeniedView)
     })
   }
   
