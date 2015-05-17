@@ -51,6 +51,21 @@ class AAImagePickerController : UINavigationController {
       self.listController.selectionColor = selectionColor
     }
   }
+  internal var selectedItems = [ImageItem]() {
+    didSet {
+      let count = selectedItems.count
+      println("selectedItems = \(count)")
+      if count == 0 {
+        addBtn.title = "Add"
+      } else {
+        addBtn.title = "Add (\(count))"
+      }
+    }
+  }
+  lazy internal var addBtn : UIBarButtonItem = {
+    let btn = UIBarButtonItem(title: "Add", style: .Done, target: self, action: "cancelAction")
+    return btn
+  }()
   
   // MARK: Initialization
   convenience init() {
@@ -68,7 +83,7 @@ class AAImagePickerController : UINavigationController {
   override func pushViewController(viewController: UIViewController, animated: Bool) {
     super.pushViewController(viewController, animated: animated)
     
-    self.topViewController.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Add", style: UIBarButtonItemStyle.Done, target: self, action: "cancelAction")
+    self.topViewController.navigationItem.rightBarButtonItem = addBtn
 
     if self.viewControllers.count == 1 &&
       self.topViewController?.navigationItem.leftBarButtonItem == nil {
@@ -83,6 +98,19 @@ class AAImagePickerController : UINavigationController {
     }
   }
  
+}
+
+internal extension UIViewController {
+  var imagePickerController: AAImagePickerController? {
+    get {
+      let nav = self.navigationController
+      if nav is AAImagePickerController {
+        return nav as? AAImagePickerController
+      } else {
+        return nil
+      }
+    }
+  }
 }
 
 // MARK: - AAImagePickerControllerList
@@ -206,7 +234,7 @@ class AAImagePickerControllerList : UICollectionViewController {
       let cell = collectionView.dequeueReusableCellWithReuseIdentifier(AAImageCellIdentifier, forIndexPath: indexPath) as! AAImagePickerCollectionCell
       cell.thumbnail = item.thumbnailImage
       cell.selectionColor = selectionColor
-      if find(selectedItems, item) != nil {
+      if find(imagePickerController!.selectedItems, item) != nil {
         cell.selected = true
         collectionView.selectItemAtIndexPath(indexPath, animated: false, scrollPosition: .None)
       } else {
@@ -233,8 +261,8 @@ class AAImagePickerControllerList : UICollectionViewController {
       }
     } else {
       let item = imageItems[indexPath.row - 1] as! ImageItem
-      if find(selectedItems, item) == nil {
-        selectedItems.append(item)
+      if find(imagePickerController!.selectedItems, item) == nil {
+        imagePickerController!.selectedItems.append(item)
       }
     }
   }
@@ -242,7 +270,7 @@ class AAImagePickerControllerList : UICollectionViewController {
   override func collectionView(collectionView: UICollectionView, didDeselectItemAtIndexPath indexPath: NSIndexPath) {
     if indexPath.row != 0 {
       let item = imageItems[indexPath.row - 1] as! ImageItem
-      selectedItems.removeAtIndex(find(selectedItems, item)!)
+      imagePickerController!.selectedItems.removeAtIndex(find(imagePickerController!.selectedItems, item)!)
     }
   }
   
