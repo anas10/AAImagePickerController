@@ -128,16 +128,22 @@ class AAImagePickerControllerList : UICollectionViewController {
   
   // MARK: View lifecycle
   override func viewDidLoad() {
+    super.viewDidLoad()
     
     albumPickerInitialisation()
-    updateGroups { () -> () in
-      self.updateImagesList()
-    }
     
     self.collectionView!.backgroundColor = UIColor.whiteColor()
     self.collectionView!.allowsMultipleSelection = true
     self.collectionView!.registerClass(AAImagePickerCollectionCell.self, forCellWithReuseIdentifier: AAImageCellIdentifier)
     self.collectionView!.registerClass(AATakePhotoCollectionCell.self, forCellWithReuseIdentifier: AATakePhotoCellIdentifier)
+  }
+  
+  override func viewDidAppear(animated: Bool) {
+    super.viewDidAppear(animated)
+    
+    updateGroups { () -> () in
+      self.updateImagesList()
+    }
   }
   
   // MARK: Library methods
@@ -247,7 +253,7 @@ extension AAImagePickerControllerList : UIImagePickerControllerDelegate, UINavig
     // TODO : Handle taken pictures
     println(info)
     picker.dismissViewControllerAnimated(true, completion:nil)
-    self.dismissViewControllerAnimated(false, completion: nil)
+    self.dismissViewControllerAnimated(true, completion: nil)
   }
   
   func imagePickerControllerDidCancel(picker: UIImagePickerController) {
