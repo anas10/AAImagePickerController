@@ -11,6 +11,7 @@ import AssetsLibrary
 
 // MARK: - Constants
 let AAImageCellIdentifier = "AAImageCellIdentifier"
+let AATakePhotoCellIdentifier = "AATakePhotoCellIdentifier"
 
 // MARK: - AAImagePickerControllerDelegate
 protocol AAImagePickerControllerDelegate : NSObjectProtocol {
@@ -127,6 +128,7 @@ class AAImagePickerControllerList : UICollectionViewController {
     self.collectionView!.backgroundColor = UIColor.whiteColor()
     self.collectionView!.allowsMultipleSelection = true
     self.collectionView!.registerClass(AAImagePickerCollectionCell.self, forCellWithReuseIdentifier: AAImageCellIdentifier)
+    self.collectionView!.registerClass(AATakePhotoCollectionCell.self, forCellWithReuseIdentifier: AATakePhotoCellIdentifier)
   }
   
   // MARK: Library methods
@@ -178,13 +180,45 @@ class AAImagePickerControllerList : UICollectionViewController {
   }
   
   override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-    let item = imageItems[indexPath.row] as! ImageItem
-    let cell = collectionView.dequeueReusableCellWithReuseIdentifier(AAImageCellIdentifier, forIndexPath: indexPath) as! AAImagePickerCollectionCell
-    cell.thumbnail = item.thumbnailImage
-    return cell
+    if indexPath.row == 0 {
+      let takePhotoCell = collectionView.dequeueReusableCellWithReuseIdentifier(AATakePhotoCellIdentifier, forIndexPath: indexPath) as! AATakePhotoCollectionCell
+      return takePhotoCell
+    } else {
+      let item = imageItems[indexPath.row - 1] as! ImageItem
+      let cell = collectionView.dequeueReusableCellWithReuseIdentifier(AAImageCellIdentifier, forIndexPath: indexPath) as! AAImagePickerCollectionCell
+      cell.thumbnail = item.thumbnailImage
+      return cell
+    }
   }
   
   // MARK: UICollectionViewDelegate
+  override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+    if indexPath.row == 0 {
+      collectionView.deselectItemAtIndexPath(indexPath, animated: false)
+      if UIImagePickerController.isSourceTypeAvailable(.Camera) {
+        var picker = UIImagePickerController()
+        picker.delegate = self
+        picker.allowsEditing = true
+        picker.sourceType = UIImagePickerControllerSourceType.Camera
+        self.presentViewController(picker, animated: true, completion: nil)
+      } else {
+        let alert = UIAlertView(title: "Error", message: "This device has no camera", delegate: nil, cancelButtonTitle: "Ok")
+        alert.show()
+      }
+    } else {
+    }
+  }
+extension AAImagePickerControllerList : UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+  func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [NSObject : AnyObject]) {
+    // TODO : Handle taken pictures
+    println(info)
+    picker.dismissViewControllerAnimated(true, completion:nil)
+    self.dismissViewControllerAnimated(false, completion: nil)
+  }
+  
+  func imagePickerControllerDidCancel(picker: UIImagePickerController) {
+    picker.dismissViewControllerAnimated(true, completion: nil)
+  }
 }
 
 extension AAImagePickerControllerList : AKPickerViewDelegate, AKPickerViewDataSource {
@@ -247,3 +281,26 @@ class AAImagePickerCollectionCell: UICollectionViewCell {
     imageView.frame = self.bounds
   }
 }
+
+// MARK: - AATakePhotoCollectionCell
+class AATakePhotoCollectionCell: UICollectionViewCell {
+  private var imageView = UIImageView(image: UIImage(named: "take_photo"))
+  
+  override init(frame: CGRect) {
+    super.init(frame: frame)
+    
+    imageView.frame = self.bounds
+    self.contentView.addSubview(imageView)
+  }
+  
+  required init(coder aDecoder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+  
+  override func layoutSubviews() {
+    super.layoutSubviews()
+    
+    imageView.frame = self.bounds
+  }
+}
+
