@@ -74,7 +74,6 @@ class AAImagePickerController : UINavigationController {
     }
   }
   lazy internal var addBtn : UIBarButtonItem = {
-    let btn = UIBarButtonItem(title: "Add", style: .Done, target: self, action: "cancelAction")
     let btn : UIBarButtonItem = UIBarButtonItem(title: "Add", style: .Done, target: self, action: "addAction")
     return btn
   }()
