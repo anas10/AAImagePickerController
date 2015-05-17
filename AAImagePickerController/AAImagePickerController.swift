@@ -226,6 +226,7 @@ class AAImagePickerControllerList : UICollectionViewController {
     let currentGroup = groups[selectedAlbum] as! ImageGroup
 
     self.imageItems.removeAllObjects()
+    currentGroup.group.setAssetsFilter(ALAssetsFilter.allPhotos())
     currentGroup.group.enumerateAssetsUsingBlock { (result: ALAsset!, index: Int, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
       if result != nil {
         let item = ImageItem()
