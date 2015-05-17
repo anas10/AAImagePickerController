@@ -34,22 +34,24 @@ class ImageItem : NSObject {
     return UIImage(CGImage: self.originalAsset.defaultRepresentation().fullResolutionImage().takeUnretainedValue())
     }()
   var url: NSURL?
-  
-  override func isEqual(object: AnyObject?) -> Bool {
-    let other = object as! ImageItem!
-    return self.url!.isEqual(other.url!)
-  }
 }
 
 // MARK: - AAImagePickerController
 class AAImagePickerController : UINavigationController {
 
   internal weak var pickerDelegate : AAImagePickerControllerDelegate?
+  var listController : AAImagePickerControllerList!
+  var selectionColor = UIColor.clearColor() {
+    didSet {
+      self.listController.selectionColor = selectionColor
+    }
+  }
   
   // MARK: Initialization
   convenience init() {
-    var listController = AAImagePickerControllerList()
-    self.init(rootViewController: listController)
+    let aListController = AAImagePickerControllerList()
+    self.init(rootViewController: aListController)
+    listController = aListController
   }
   
   // MARK: View lifecycle
@@ -88,11 +90,12 @@ class AAImagePickerControllerList : UICollectionViewController {
   lazy private var groups: NSMutableArray = {
     return NSMutableArray()
     }()
-  
   private lazy var imageItems: NSMutableArray = {
     return NSMutableArray()
     }()
-
+  internal var selectedItems = [ImageItem]()
+  var selectionColor = UIColor.cyanColor().colorWithAlphaComponent(0.5)
+  
   // MARK: Initialization
   override init(collectionViewLayout layout: UICollectionViewLayout) {
     super.init(collectionViewLayout: layout)
@@ -176,7 +179,7 @@ class AAImagePickerControllerList : UICollectionViewController {
   }
   
   override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-    return imageItems.count
+    return imageItems.count + 1
   }
   
   override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
@@ -187,6 +190,12 @@ class AAImagePickerControllerList : UICollectionViewController {
       let item = imageItems[indexPath.row - 1] as! ImageItem
       let cell = collectionView.dequeueReusableCellWithReuseIdentifier(AAImageCellIdentifier, forIndexPath: indexPath) as! AAImagePickerCollectionCell
       cell.thumbnail = item.thumbnailImage
+      cell.selectionColor = selectionColor
+      if find(selectedItems, item) != nil {
+        cell.selected = true
+      } else {
+        cell.selected = false
+      }
       return cell
     }
   }
@@ -206,8 +215,20 @@ class AAImagePickerControllerList : UICollectionViewController {
         alert.show()
       }
     } else {
+      let item = imageItems[indexPath.row - 1] as! ImageItem
+      selectedItems.append(item)
     }
   }
+  
+  override func collectionView(collectionView: UICollectionView, didDeselectItemAtIndexPath indexPath: NSIndexPath) {
+    if indexPath.row != 0 {
+      let item = imageItems[indexPath.row - 1] as! ImageItem
+      selectedItems.removeAtIndex(find(selectedItems, item)!)
+    }
+  }
+  
+}
+
 extension AAImagePickerControllerList : UIImagePickerControllerDelegate, UINavigationControllerDelegate {
   func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [NSObject : AnyObject]) {
     // TODO : Handle taken pictures
@@ -254,21 +275,54 @@ extension AAImagePickerControllerList : AKPickerViewDelegate, AKPickerViewDataSo
   }
 }
 
+// MARK: - UIImage extension
+extension UIImage {
+  func imageWithColor(color: UIColor) -> UIImage {
+    let rect = CGRectMake(0, 0, self.size.width, self.size.height)
+    UIGraphicsBeginImageContext(rect.size)
+    let context = UIGraphicsGetCurrentContext()
+    color.set()
+    CGContextTranslateCTM(context, 0, self.size.height)
+    CGContextScaleCTM(context, 1.0, -1.0)
+    CGContextClipToMask(context, rect, self.CGImage)
+    CGContextFillRect(context, rect)
+    let image = UIGraphicsGetImageFromCurrentImageContext()
+    UIGraphicsEndImageContext()
+    return image
+  }
+}
+
 // MARK: - AAImagePickerCollectionCell
 class AAImagePickerCollectionCell: UICollectionViewCell {
+  private var imageView = UIImageView()
+  private var selectedView = UIImageView(image: UIImage(named: "check"))
+
+  var selectionColor = UIColor.clearColor() {
+    didSet {
+      layer.borderColor = selectionColor.CGColor
+      selectedView.image = selectedView.image?.imageWithColor(selectionColor)
+    }
+  }
+  
   var thumbnail: UIImage! {
     didSet {
       self.imageView.image = thumbnail
     }
   }
   
-  private var imageView = UIImageView()
+  override var selected: Bool {
+    didSet {
+      selectedView.hidden = !super.selected
+      layer.borderWidth = super.selected ? 1 : 0
+    }
+  }
   
   override init(frame: CGRect) {
     super.init(frame: frame)
     
     imageView.frame = self.bounds
     self.contentView.addSubview(imageView)
+    self.contentView.addSubview(selectedView)
   }
   
   required init(coder aDecoder: NSCoder) {
@@ -279,6 +333,9 @@ class AAImagePickerCollectionCell: UICollectionViewCell {
     super.layoutSubviews()
     
     imageView.frame = self.bounds
+    selectedView.frame.size = CGSizeMake(self.contentView.bounds.width / 5, self.contentView.bounds.height / 5)
+    selectedView.frame.origin = CGPoint(x: self.contentView.bounds.width - selectedView.bounds.width - 3,
+      y: self.contentView.bounds.height - selectedView.bounds.height - 3)
   }
 }
 

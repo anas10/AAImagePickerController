@@ -16,6 +16,7 @@
 		8A678AAB1B077AB60036A1BC /* AAImagePickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A678AAA1B077AB60036A1BC /* AAImagePickerController.swift */; };
 		8A678AAD1B078CF60036A1BC /* AKPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A678AAC1B078CF60036A1BC /* AKPickerView.swift */; };
 		8A678AAF1B07C4C10036A1BC /* take_photo.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A678AAE1B07C4C10036A1BC /* take_photo.png */; };
+		8A678AB11B0811C50036A1BC /* check.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A678AB01B0811C50036A1BC /* check.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,6 +43,7 @@
 		8A678AAA1B077AB60036A1BC /* AAImagePickerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AAImagePickerController.swift; sourceTree = "<group>"; };
 		8A678AAC1B078CF60036A1BC /* AKPickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AKPickerView.swift; sourceTree = "<group>"; };
 		8A678AAE1B07C4C10036A1BC /* take_photo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = take_photo.png; sourceTree = "<group>"; };
+		8A678AB01B0811C50036A1BC /* check.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = check.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +125,7 @@
 		8A678AA91B077AB60036A1BC /* AAImagePickerController */ = {
 			isa = PBXGroup;
 			children = (
+				8A678AB01B0811C50036A1BC /* check.png */,
 				8A678AAE1B07C4C10036A1BC /* take_photo.png */,
 				8A678AAA1B077AB60036A1BC /* AAImagePickerController.swift */,
 			);
@@ -210,6 +213,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8A678A8B1B077A480036A1BC /* Main.storyboard in Resources */,
+				8A678AB11B0811C50036A1BC /* check.png in Resources */,
 				8A678A901B077A480036A1BC /* LaunchScreen.xib in Resources */,
 				8A678A8D1B077A480036A1BC /* Images.xcassets in Resources */,
 				8A678AAF1B07C4C10036A1BC /* take_photo.png in Resources */,
