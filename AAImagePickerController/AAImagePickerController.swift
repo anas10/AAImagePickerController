@@ -34,6 +34,11 @@ class ImageItem : NSObject {
     return UIImage(CGImage: self.originalAsset.defaultRepresentation().fullResolutionImage().takeUnretainedValue())
     }()
   var url: NSURL?
+  
+  override func isEqual(object: AnyObject?) -> Bool {
+    let other = object as! ImageItem!
+    return self.url!.isEqual(other.url!)
+  }
 }
 
 // MARK: - AAImagePickerController
@@ -104,7 +109,7 @@ class AAImagePickerControllerList : UICollectionViewController {
   convenience init() {
     let layout = UICollectionViewFlowLayout()
     
-    let interval: CGFloat = 3
+    let interval: CGFloat = 1
     layout.minimumInteritemSpacing = interval
     layout.minimumLineSpacing = interval
     
@@ -179,7 +184,10 @@ class AAImagePickerControllerList : UICollectionViewController {
   }
   
   override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-    return imageItems.count + 1
+    if imageItems.count > 0 {
+      return imageItems.count + 1
+    }
+    return 0
   }
   
   override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
@@ -193,8 +201,10 @@ class AAImagePickerControllerList : UICollectionViewController {
       cell.selectionColor = selectionColor
       if find(selectedItems, item) != nil {
         cell.selected = true
+        collectionView.selectItemAtIndexPath(indexPath, animated: false, scrollPosition: .None)
       } else {
         cell.selected = false
+        collectionView.deselectItemAtIndexPath(indexPath, animated: false)
       }
       return cell
     }
@@ -216,7 +226,9 @@ class AAImagePickerControllerList : UICollectionViewController {
       }
     } else {
       let item = imageItems[indexPath.row - 1] as! ImageItem
-      selectedItems.append(item)
+      if find(selectedItems, item) == nil {
+        selectedItems.append(item)
+      }
     }
   }
   
