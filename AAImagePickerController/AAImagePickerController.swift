@@ -145,7 +145,7 @@ class AAImagePickerControllerList : UICollectionViewController {
   private lazy var imageItems: NSMutableArray = {
     return NSMutableArray()
     }()
-  var selectionColor = UIColor.cyanColor().colorWithAlphaComponent(0.5)
+  var selectionColor = UIColor(red: 55/255, green: 93/255, blue: 129/255, alpha: 1.0)
   var currentGroupSelection : Int?
   
   // MARK: Initialization
@@ -365,11 +365,12 @@ extension UIImage {
 class AAImagePickerCollectionCell: UICollectionViewCell {
   private var imageView = UIImageView()
   private var selectedView = UIImageView(image: UIImage(named: "check"))
-
+  private var overlay = UIView()
+  
   var selectionColor = UIColor.clearColor() {
     didSet {
       layer.borderColor = selectionColor.CGColor
-      selectedView.image = selectedView.image?.imageWithColor(selectionColor)
+//      selectedView.image = selectedView.image?.imageWithColor(selectionColor)
     }
   }
   
@@ -382,7 +383,8 @@ class AAImagePickerCollectionCell: UICollectionViewCell {
   override var selected: Bool {
     didSet {
       selectedView.hidden = !super.selected
-      layer.borderWidth = super.selected ? 1 : 0
+      overlay.hidden = !super.selected
+      layer.borderWidth = super.selected ? 0.6 : 0
     }
   }
   
@@ -390,7 +392,10 @@ class AAImagePickerCollectionCell: UICollectionViewCell {
     super.init(frame: frame)
     
     imageView.frame = self.bounds
+    overlay.frame = self.bounds
+    overlay.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.2)
     self.contentView.addSubview(imageView)
+    self.contentView.addSubview(overlay)
     self.contentView.addSubview(selectedView)
   }
   
@@ -402,9 +407,10 @@ class AAImagePickerCollectionCell: UICollectionViewCell {
     super.layoutSubviews()
     
     imageView.frame = self.bounds
-    selectedView.frame.size = CGSizeMake(self.contentView.bounds.width / 5, self.contentView.bounds.height / 5)
-    selectedView.frame.origin = CGPoint(x: self.contentView.bounds.width - selectedView.bounds.width - 3,
-      y: self.contentView.bounds.height - selectedView.bounds.height - 3)
+    overlay.frame = self.bounds
+    selectedView.frame.size = CGSizeMake(self.contentView.bounds.width / 4, self.contentView.bounds.height / 4)
+    selectedView.frame.origin = CGPoint(x: self.contentView.bounds.width - selectedView.bounds.width - 5,
+      y: self.contentView.bounds.height - selectedView.bounds.height - 5)
   }
 }
 

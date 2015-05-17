@@ -25,7 +25,6 @@ class ViewController: UIViewController {
   @IBAction func showPicker(sender: AnyObject) {
     let pc = AAImagePickerController()
     pc.pickerDelegate = self
-    pc.selectionColor = UIColor.greenColor()
     self.presentViewController(pc, animated: true, completion: nil)
   }
 }
