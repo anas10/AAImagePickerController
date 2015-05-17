@@ -57,20 +57,22 @@ class AAImagePickerController : UINavigationController {
 
   internal weak var pickerDelegate : AAImagePickerControllerDelegate?
   var listController : AAImagePickerControllerList!
+  var allowsMultipleSelection : Bool = true
+  var maximumNumberOfSelection : Int = 0
   var selectionColor = UIColor.clearColor() {
     didSet {
       self.listController.selectionColor = selectionColor
     }
   }
   internal var selectedItems = [ImageItem]() {
-    didSet {
-      let count = selectedItems.count
-      println("selectedItems = \(count)")
-      if count == 0 {
+    willSet(newValue) {
+      let currentCount = selectedItems.count
+      println("selectedItems = \(currentCount)")
+      if newValue.count == 0 {
         addBtn.title = "Add"
         addBtn.enabled = false
-      } else {
-        addBtn.title = "Add (\(count))"
+      } else if (newValue.count != currentCount) {
+        addBtn.title = "Add (\(newValue.count))"
         addBtn.enabled = true
       }
     }
@@ -186,10 +188,10 @@ class AAImagePickerControllerList : UICollectionViewController {
     
     albumPickerInitialisation()
     
-    self.collectionView!.backgroundColor = UIColor.whiteColor()
-    self.collectionView!.allowsMultipleSelection = true
-    self.collectionView!.registerClass(AAImagePickerCollectionCell.self, forCellWithReuseIdentifier: AAImageCellIdentifier)
-    self.collectionView!.registerClass(AATakePhotoCollectionCell.self, forCellWithReuseIdentifier: AATakePhotoCellIdentifier)
+    collectionView!.backgroundColor = UIColor.whiteColor()
+    collectionView!.allowsMultipleSelection = imagePickerController!.allowsMultipleSelection
+    collectionView!.registerClass(AAImagePickerCollectionCell.self, forCellWithReuseIdentifier: AAImageCellIdentifier)
+    collectionView!.registerClass(AATakePhotoCollectionCell.self, forCellWithReuseIdentifier: AATakePhotoCellIdentifier)
   }
   
   override func viewDidAppear(animated: Bool) {
@@ -273,6 +275,11 @@ class AAImagePickerControllerList : UICollectionViewController {
   }
   
   // MARK: UICollectionViewDelegate
+  override func collectionView(collectionView: UICollectionView, shouldSelectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
+    let max = imagePickerController!.maximumNumberOfSelection
+    return max > 0 ? (imagePickerController!.selectedItems.count < max) : true
+  }
+  
   override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
     if indexPath.row == 0 {
       collectionView.deselectItemAtIndexPath(indexPath, animated: false)
