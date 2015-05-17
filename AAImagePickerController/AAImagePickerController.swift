@@ -15,6 +15,7 @@ let AATakePhotoCellIdentifier = "AATakePhotoCellIdentifier"
 
 // MARK: - AAImagePickerControllerDelegate
 protocol AAImagePickerControllerDelegate : NSObjectProtocol {
+  func imagePickerControllerDidFinishSelection(images: [ImageItem])
   func imagePickerControllerDidCancel()
 }
 
@@ -25,19 +26,29 @@ class ImageGroup {
 }
 
 class ImageItem : NSObject {
-  private var originalAsset: ALAsset!
+  private var originalAsset: ALAsset?
   var thumbnailImage: UIImage?
+  lazy var image: UIImage? = {
+    if let origAsset = self.originalAsset {
+      return self.fullScreenImage
+    } else {
+      return self.image
+    }
+    }()
   lazy var fullScreenImage: UIImage? = {
-    return UIImage(CGImage: self.originalAsset.defaultRepresentation().fullScreenImage().takeUnretainedValue())
+    return UIImage(CGImage: self.originalAsset?.defaultRepresentation().fullScreenImage().takeUnretainedValue())
     }()
   lazy var fullResolutionImage: UIImage? = {
-    return UIImage(CGImage: self.originalAsset.defaultRepresentation().fullResolutionImage().takeUnretainedValue())
+    return UIImage(CGImage: self.originalAsset?.defaultRepresentation().fullResolutionImage().takeUnretainedValue())
     }()
   var url: NSURL?
   
   override func isEqual(object: AnyObject?) -> Bool {
-    let other = object as! ImageItem!
-    return self.url!.isEqual(other.url!)
+    let other = object as! ImageItem
+    if let url = self.url, otherUrl = other.url {
+      return url.isEqual(otherUrl)
+    }
+    return false
   }
 }
 
@@ -64,6 +75,7 @@ class AAImagePickerController : UINavigationController {
   }
   lazy internal var addBtn : UIBarButtonItem = {
     let btn = UIBarButtonItem(title: "Add", style: .Done, target: self, action: "cancelAction")
+    let btn : UIBarButtonItem = UIBarButtonItem(title: "Add", style: .Done, target: self, action: "addAction")
     return btn
   }()
   
@@ -98,6 +110,11 @@ class AAImagePickerController : UINavigationController {
     }
   }
  
+  func addAction() {
+    if let delegate = self.pickerDelegate {
+      delegate.imagePickerControllerDidFinishSelection(selectedItems)
+    }
+  }
 }
 
 internal extension UIViewController {
@@ -126,7 +143,6 @@ class AAImagePickerControllerList : UICollectionViewController {
   private lazy var imageItems: NSMutableArray = {
     return NSMutableArray()
     }()
-  internal var selectedItems = [ImageItem]()
   var selectionColor = UIColor.cyanColor().colorWithAlphaComponent(0.5)
   var currentGroupSelection : Int?
   
@@ -278,10 +294,12 @@ class AAImagePickerControllerList : UICollectionViewController {
 
 extension AAImagePickerControllerList : UIImagePickerControllerDelegate, UINavigationControllerDelegate {
   func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [NSObject : AnyObject]) {
-    // TODO : Handle taken pictures
-    println(info)
+    let item = ImageItem()
+    item.image = info[UIImagePickerControllerEditedImage] as? UIImage
+    item.url = info[UIImagePickerControllerReferenceURL] as? NSURL
+    imagePickerController!.selectedItems = [item]
+    imagePickerController!.addAction()
     picker.dismissViewControllerAnimated(true, completion:nil)
-    self.dismissViewControllerAnimated(true, completion: nil)
   }
   
   func imagePickerControllerDidCancel(picker: UIImagePickerController) {
