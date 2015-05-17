@@ -100,6 +100,7 @@ class AAImagePickerControllerList : UICollectionViewController {
     }()
   internal var selectedItems = [ImageItem]()
   var selectionColor = UIColor.cyanColor().colorWithAlphaComponent(0.5)
+  var currentGroupSelection : Int?
   
   // MARK: Initialization
   override init(collectionViewLayout layout: UICollectionViewLayout) {
@@ -282,8 +283,10 @@ extension AAImagePickerControllerList : AKPickerViewDelegate, AKPickerViewDataSo
   }
   
   func pickerView(pickerView: AKPickerView, didSelectItem item: Int) {
-    let assetGroup : ImageGroup = groups[item] as! ImageGroup
-    updateImagesList()
+    if currentGroupSelection == nil || currentGroupSelection != item {
+      currentGroupSelection = item
+      updateImagesList()
+    }
   }
 }
 
