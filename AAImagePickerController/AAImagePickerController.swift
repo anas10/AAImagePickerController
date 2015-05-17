@@ -59,6 +59,8 @@ class AAImagePickerController : UINavigationController {
   var listController : AAImagePickerControllerList!
   var allowsMultipleSelection : Bool = true
   var maximumNumberOfSelection : Int = 0
+  var numberOfColumnInPortrait : Int = 4
+  var numberOfColumnInLandscape : Int = 7
   var selectionColor = UIColor.clearColor() {
     didSet {
       self.listController.selectionColor = selectionColor
@@ -165,16 +167,9 @@ class AAImagePickerControllerList : UICollectionViewController {
   
   convenience init() {
     let layout = UICollectionViewFlowLayout()
-    
     let interval: CGFloat = 1
     layout.minimumInteritemSpacing = interval
     layout.minimumLineSpacing = interval
-    
-    let screenWidth = UIScreen.mainScreen().bounds.width
-    let itemWidth = (screenWidth - interval * 3) / 4
-    
-    layout.itemSize = CGSize(width: itemWidth, height: itemWidth)
-    
     self.init(collectionViewLayout: layout)
   }
   
@@ -308,6 +303,26 @@ class AAImagePickerControllerList : UICollectionViewController {
     }
   }
   
+  // MARK : Rotation
+  override func willRotateToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
+    super.willRotateToInterfaceOrientation(toInterfaceOrientation, duration: duration)
+    self.collectionView!.collectionViewLayout.invalidateLayout()
+  }
+}
+
+extension AAImagePickerControllerList  : UICollectionViewDelegateFlowLayout {
+  func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+    let numberOfColumns : Int
+    let side : CGFloat
+    if UIInterfaceOrientationIsPortrait(UIApplication.sharedApplication().statusBarOrientation) {
+      numberOfColumns = imagePickerController!.numberOfColumnInPortrait
+    } else {
+      numberOfColumns = imagePickerController!.numberOfColumnInLandscape
+    }
+    side = (CGRectGetWidth(collectionView.frame) - 1 * CGFloat(numberOfColumns - 1)) / CGFloat(numberOfColumns)
+    println("(\(CGRectGetWidth(collectionView.frame)) - 1 * \(CGFloat(numberOfColumns - 1))) / \(CGFloat(numberOfColumns)) = \(side)")
+    return CGSizeMake(side, side)
+  }
 }
 
 extension AAImagePickerControllerList : UIImagePickerControllerDelegate, UINavigationControllerDelegate {

@@ -27,6 +27,8 @@ class ViewController: UIViewController {
     pc.pickerDelegate = self
     pc.allowsMultipleSelection = true
     pc.maximumNumberOfSelection = 6
+    pc.numberOfColumnInPortrait = 4
+    pc.numberOfColumnInLandscape = 7
     self.presentViewController(pc, animated: true, completion: nil)
   }
 }
