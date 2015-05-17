@@ -216,8 +216,8 @@ class AAImagePickerControllerList : UICollectionViewController {
         callback()
       }
       }, failureBlock: { (error: NSError!) -> Void in
-        self.accessDeniedView.frame = self.view.bounds
-        self.view.addSubview(self.accessDeniedView)
+        self.accessDeniedView.frame = self.collectionView!.bounds
+        self.collectionView!.addSubview(self.accessDeniedView)
     })
   }
   
