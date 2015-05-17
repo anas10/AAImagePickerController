@@ -136,6 +136,26 @@ internal extension UIViewController {
   }
 }
 
+// MARK : AACollectionViewFlowLayout
+internal class AACollectionViewFlowLayout : UICollectionViewFlowLayout {
+  static let interval: CGFloat = 1
+  
+  func commonInit() {
+    self.minimumInteritemSpacing = AACollectionViewFlowLayout.interval
+    self.minimumLineSpacing = AACollectionViewFlowLayout.interval
+  }
+  
+  override init() {
+    super.init()
+    self.commonInit()
+  }
+
+  required init(coder aDecoder: NSCoder) {
+    super.init(coder: aDecoder)
+    self.commonInit()
+  }
+}
+
 // MARK: - AAImagePickerControllerList
 class AAImagePickerControllerList : UICollectionViewController {
 
@@ -166,10 +186,7 @@ class AAImagePickerControllerList : UICollectionViewController {
   }
   
   convenience init() {
-    let layout = UICollectionViewFlowLayout()
-    let interval: CGFloat = 1
-    layout.minimumInteritemSpacing = interval
-    layout.minimumLineSpacing = interval
+    let layout = AACollectionViewFlowLayout()
     self.init(collectionViewLayout: layout)
   }
   
@@ -252,6 +269,7 @@ class AAImagePickerControllerList : UICollectionViewController {
   override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
     if indexPath.row == 0 {
       let takePhotoCell = collectionView.dequeueReusableCellWithReuseIdentifier(AATakePhotoCellIdentifier, forIndexPath: indexPath) as! AATakePhotoCollectionCell
+      animateCell(takePhotoCell, pos: indexPath.row)
       return takePhotoCell
     } else {
       let item = imageItems[indexPath.row - 1] as! ImageItem
@@ -265,8 +283,17 @@ class AAImagePickerControllerList : UICollectionViewController {
         cell.selected = false
         collectionView.deselectItemAtIndexPath(indexPath, animated: false)
       }
+      animateCell(cell, pos: indexPath.row)
       return cell
     }
+  }
+  
+  func animateCell(cell: UICollectionViewCell, pos: Int) {
+    cell.transform = CGAffineTransformMakeScale(0, 0)
+    UIView.animateWithDuration(0.3, delay:  Double(pos) * 0.01, options: UIViewAnimationOptions.CurveEaseInOut,
+      animations: { () -> Void in
+        cell.transform = CGAffineTransformMakeScale(1, 1)
+    }, completion: nil)
   }
   
   // MARK: UICollectionViewDelegate
@@ -319,8 +346,7 @@ extension AAImagePickerControllerList  : UICollectionViewDelegateFlowLayout {
     } else {
       numberOfColumns = imagePickerController!.numberOfColumnInLandscape
     }
-    side = (CGRectGetWidth(collectionView.frame) - 1 * CGFloat(numberOfColumns - 1)) / CGFloat(numberOfColumns)
-    println("(\(CGRectGetWidth(collectionView.frame)) - 1 * \(CGFloat(numberOfColumns - 1))) / \(CGFloat(numberOfColumns)) = \(side)")
+    side = (CGRectGetWidth(collectionView.frame) - AACollectionViewFlowLayout.interval * CGFloat(numberOfColumns - 1)) / CGFloat(numberOfColumns)
     return CGSizeMake(side, side)
   }
 }
