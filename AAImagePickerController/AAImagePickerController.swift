@@ -68,13 +68,16 @@ class AAImagePickerController : UINavigationController {
       println("selectedItems = \(count)")
       if count == 0 {
         addBtn.title = "Add"
+        addBtn.enabled = false
       } else {
         addBtn.title = "Add (\(count))"
+        addBtn.enabled = true
       }
     }
   }
   lazy internal var addBtn : UIBarButtonItem = {
     let btn : UIBarButtonItem = UIBarButtonItem(title: "Add", style: .Done, target: self, action: "addAction")
+    btn.enabled = false
     return btn
   }()
   
