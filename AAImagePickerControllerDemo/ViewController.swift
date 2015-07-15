@@ -29,6 +29,7 @@ class ViewController: UIViewController {
     pc.maximumNumberOfSelection = 6
     pc.numberOfColumnInPortrait = 4
     pc.numberOfColumnInLandscape = 7
+    pc.showTakePhoto = true
     self.presentViewController(pc, animated: true, completion: nil)
   }
 }

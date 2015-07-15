@@ -61,6 +61,7 @@ class AAImagePickerController : UINavigationController {
   var maximumNumberOfSelection : Int = 0
   var numberOfColumnInPortrait : Int = 4
   var numberOfColumnInLandscape : Int = 7
+  var showTakePhoto : Bool = true
   var selectionColor = UIColor.clearColor() {
     didSet {
       self.listController.selectionColor = selectionColor
@@ -244,7 +245,7 @@ class AAImagePickerControllerList : UICollectionViewController {
     currentGroup.group.enumerateAssetsUsingBlock { (result: ALAsset!, index: Int, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
       if result != nil {
         let item = ImageItem()
-        item.thumbnailImage = UIImage(CGImage:result.thumbnail().takeUnretainedValue())
+        item.thumbnailImage = UIImage(CGImage:result.thumbnail()?.takeUnretainedValue())
         item.url = result.valueForProperty(ALAssetPropertyAssetURL) as? NSURL
         item.originalAsset = result
         self.imageItems.insertObject(item, atIndex: 0)
@@ -261,18 +262,18 @@ class AAImagePickerControllerList : UICollectionViewController {
   
   override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
     if imageItems.count > 0 {
-      return imageItems.count + 1
+      return imageItems.count + (imagePickerController?.showTakePhoto == true ? 1 : 0)
     }
     return 0
   }
   
   override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-    if indexPath.row == 0 {
+    if indexPath.row == 0 && imagePickerController?.showTakePhoto == true {
       let takePhotoCell = collectionView.dequeueReusableCellWithReuseIdentifier(AATakePhotoCellIdentifier, forIndexPath: indexPath) as! AATakePhotoCollectionCell
       animateCell(takePhotoCell, pos: indexPath.row)
       return takePhotoCell
     } else {
-      let item = imageItems[indexPath.row - 1] as! ImageItem
+      let item = imageItems[indexPath.row - (imagePickerController?.showTakePhoto == true ? 1 : 0)] as! ImageItem
       let cell = collectionView.dequeueReusableCellWithReuseIdentifier(AAImageCellIdentifier, forIndexPath: indexPath) as! AAImagePickerCollectionCell
       cell.thumbnail = item.thumbnailImage
       cell.selectionColor = selectionColor
@@ -303,7 +304,7 @@ class AAImagePickerControllerList : UICollectionViewController {
   }
   
   override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-    if indexPath.row == 0 {
+    if indexPath.row == 0 && imagePickerController?.showTakePhoto == true {
       collectionView.deselectItemAtIndexPath(indexPath, animated: false)
       if UIImagePickerController.isSourceTypeAvailable(.Camera) {
         var picker = UIImagePickerController()
@@ -316,7 +317,7 @@ class AAImagePickerControllerList : UICollectionViewController {
         alert.show()
       }
     } else {
-      let item = imageItems[indexPath.row - 1] as! ImageItem
+      let item = imageItems[indexPath.row - (imagePickerController?.showTakePhoto == true ? 1 : 0)] as! ImageItem
       if find(imagePickerController!.selectedItems, item) == nil {
         imagePickerController!.selectedItems.append(item)
       }
@@ -325,7 +326,7 @@ class AAImagePickerControllerList : UICollectionViewController {
   
   override func collectionView(collectionView: UICollectionView, didDeselectItemAtIndexPath indexPath: NSIndexPath) {
     if indexPath.row != 0 {
-      let item = imageItems[indexPath.row - 1] as! ImageItem
+      let item = imageItems[indexPath.row - (imagePickerController?.showTakePhoto == true ? 1 : 0)] as! ImageItem
       imagePickerController!.selectedItems.removeAtIndex(find(imagePickerController!.selectedItems, item)!)
     }
   }
